@@ -1,2 +1,5 @@
 # kyru
-KyRu App
+Kyru App
+
+AWS Lambda Functions for the KyRu App.
+
