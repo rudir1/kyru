@@ -10,11 +10,8 @@ frontend:
       commands:
         - npm run build
   artifacts:
-    discard-paths: yes
-    baseDirectory: /
+    baseDirectory: build
     files:
-      - 'src/*'
-      - 'public/*'
-      - '*'
+      - '**/*'
   cache:
     paths: []
