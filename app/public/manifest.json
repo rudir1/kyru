@@ -1,6 +1,7 @@
 {
-  "short_name": "KyRuApp",
-  "name": "Kyru App",
+  "short_name": "kyruapp",
+  "name": "Kyru web application.",
+  "description": "Wireless Tags and Rachio mashup",
   "icons": [],
   "start_url": ".",
   "display": "standalone",
