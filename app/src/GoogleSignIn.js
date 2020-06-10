@@ -36,8 +36,9 @@ function GoogleSignIn() {
   const googleAuthRef = React.useRef(null) ;
 
   function onSignIn(googleUser) {
-    givenName = googleUser.getGivenName() ;
-    familyName = googleUser.getFamilyName() ;
+    let basicProfile = getBasicProfile() ;
+    givenName = basicProfile.getGivenName() ;
+    familyName = basicProfile.getFamilyName() ;
     console.log ("Google API sign in success.") ;
     setGoogleSignInState(GoogleSignInState.SUCCESS) ;
   }
