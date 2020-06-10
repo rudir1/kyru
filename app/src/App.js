@@ -1,86 +1,48 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
+import GoogleSignIn from './GoogleSignIn';
 import './App.css';
 
+// enumerator for current view
+
+const Color = {
+   GOOGLESIGNIN: 1,
+   RACHIOSIGNIN: 2,
+   WIRELESSTAGSIGNIN: 3,
+   MAIN: 4
+};
+Object.freeze(Color);
+
+function Main() {
+  const [count, setCount] = React.useState(0) ;
+
+  function increaseCount() {
+    setCount(count + 1);
+  }
+
 /*
-function Welcome(props) {
-  return <h1>Hello, {props.name}</h1>;
-}
-
-class DateToday extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {date: new Date()};
+  function onGoogleSignIn(googleUser) {
+        var profile = googleUser.getBasicProfile();
+        console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+        console.log('Name: ' + profile.getName());
+        console.log('Image URL: ' + profile.getImageUrl());
+        console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
   }
-
-  componentDidMount() {
-    this.timerID = setInterval(() => this.tick(), 1000) ;
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.timerID);
-  }
-
-  tick() {
-    this.setState({
-      date: new Date()
-    });
-  }
-
-  render () {
-    return (
-      <h1>Today is {this.state.date.toLocaleTimeString()}.</h1>
-    );
-  }
-}
-
-function Example() {
-  // Declare a new state variable, which we'll call "count"
-  const [count, setCount] = useState(0);
-
-  // Similar to componentDidMount and componentDidUpdate:
-  useEffect(() => {
-    // Update the document title using the browser API
-    document.title = `You clicked ${count} times`;
-  });
+*/
+  React.useEffect(() => {
+    console.log ("Inside useEffect() count " + count) ;
+  }, [count]) ;
 
   return (
     <div>
-      <p>You clicked {count} times</p>
-      <button onClick={() => setCount(count + 1)}>
-        Click me
-      </button>
+      <button onClick={increaseCount}>Count {count}</button>
+      <GoogleSignIn/>
     </div>
-  );
-}
-*/
-
-/*
-function Google() {
-}
-*/
-
-function Counter() {
-  const [date, setDate] = useState(new Date());
-  const timerId = useRef();
-
-  useEffect(() => {
-    timerId.current = setInterval(()=>{setDate(new Date());}, 1000);
-
-    return () => {
-      clearInterval(timerId.current);
-    };
-  });
- 
-  return (
-    <div>
-      <h1>Time: {date.toLocaleTimeString()}.</h1>
-    </div>
-  );
+  ) ;
 }
 
 function App() {
   return (
-    <Counter />
+    <Main />
   );
 }
 
