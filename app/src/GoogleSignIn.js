@@ -43,6 +43,7 @@ function GoogleSignIn() {
   }
 
   function onInit(value) {
+    gapiRenderOptions.onsuccess = onSignIn ;
     gapi.signin2.render('GoogleSignInButton', gapiRenderOptions);
     googleAuthRef.current = gapi.auth2.getAuthInstance();
     console.log ("Google API init success.") ;
@@ -61,7 +62,6 @@ function GoogleSignIn() {
 
   React.useEffect(() => {
     gapi.load('auth2', function() {
-      gapiClientConfig.onsuccess = onSignIn ;
       gapi.auth2.init(gapiClientConfig)
       .then(onInit, onError)
       .catch(onCatch) ;
