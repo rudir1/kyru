@@ -12,6 +12,7 @@ Object.freeze(GoogleSignInState);
 
 // google oauth2 api stuff
 
+let gapi = window.gapi ;
 let gapiRenderOptions = {
   scope: 'email profile openid',
 //  width: 200,
@@ -29,7 +30,6 @@ let gapiClientConfig = {
 // Google Sign In Component
 
 function GoogleSignIn() {
-  let gapi = window.gapi ;
   let givenName ;
   let familyName ;
   const [googleSignInState, setGoogleSignInState] = React.useState(GoogleSignInState.INIT) ;
@@ -67,7 +67,7 @@ function GoogleSignIn() {
       .catch(onCatch) ;
     }) ;
 // eslint-disable-next-line
-  },[]) ;
+  },[gapi]) ;
 
   if (googleSignInState === GoogleSignInState.INIT) {
     return (
