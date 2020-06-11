@@ -44,7 +44,7 @@ function GoogleSignIn() {
   function onInit(value) {
     let googleAuth = gapi.auth2.getAuthInstance();
     if (googleAuth.isSignedIn.get()) {
-      onSignIn (googleAuth.currentUser.get()) ;
+      onSignIn(googleAuth.currentUser.get()) ;
     }
     else {
       gapiRenderOptions.onsuccess = onSignIn ;
@@ -74,21 +74,23 @@ function GoogleSignIn() {
 // eslint-disable-next-line
   },[gapi]) ;
 
-  if (signInState === SignInState.INIT) {
-    return (
-      <div id='GoogleSignInButton'/>
-    ) ;
-  }
 
-  if (signInState === SignInState.SUCCESS) {
-    return (
-      <div>Hello {signInName.givenName} {signInName.familyName}!!</div>
-    ) ;
-  }
-
+    function C() {
+            switch(signInState) {
+            case SignInState.INIT:
+                 return <div id="GoogleSignInButton"></div>
+            case SignInState.SUCCESS:
+                return <div>Hello {signInName.givenName} {signInName.familyName}!!</div>
+            default:
+                 return <div>Could not initialize Google Sign In.</div>
+            }
+    }
   return (
-    <div>Could not initialize Google Sign In.</div>
+    <div>
+        <C />
+    </div>
   ) ;
 }
+
 
 export default GoogleSignIn;
