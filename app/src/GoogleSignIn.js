@@ -2,13 +2,13 @@ import React from 'react';
 
 // enumerator for google load state
 
-const GoogleSignInState = {
+const SignInState = {
   INIT: 0,
   ERROR: 1,
   CATCH: 2,
   SUCCESS: 3
 };
-Object.freeze(GoogleSignInState);
+Object.freeze(SignInState);
 
 // google oauth2 api stuff
 
@@ -30,17 +30,15 @@ let gapiClientConfig = {
 // Google Sign In Component
 
 function GoogleSignIn() {
-  let givenName ;
-  let familyName ;
-  const [googleSignInState, setGoogleSignInState] = React.useState(GoogleSignInState.INIT) ;
+  const [signInState, setSignInState] = React.useState(SignInState.INIT) ;
+  const [signInName, setSignInName] = React.useState({givenName: '', familyName: ''}) ;
   const googleAuthRef = React.useRef(null) ;
 
   function onSignIn(googleUser) {
     let basicProfile = googleUser.getBasicProfile() ;
-    givenName = basicProfile.getGivenName() ;
-    familyName = basicProfile.getFamilyName() ;
+    setSignInName({givenName: basicProfile.getGivenName(), familyName: basicProfile.getFamilyName()}) ;
     console.log ("Google API sign in success.") ;
-    setGoogleSignInState(GoogleSignInState.SUCCESS) ;
+    setSignInState(SignInState.SUCCESS) ;
   }
 
   function onInit(value) {
@@ -53,18 +51,18 @@ function GoogleSignIn() {
       gapi.signin2.render('GoogleSignInButton', gapiRenderOptions);
       googleAuthRef.current = gapi.auth2.getAuthInstance();
       console.log ("Google API init success.") ;
-      setGoogleSignInState(GoogleSignInState.INIT) ;
+      setSignInState(SignInState.INIT) ;
     }
   }
 
   function onError(value) {
     console.log ("Google API init error. " + value) ;
-    setGoogleSignInState(GoogleSignInState.ERROR) ;
+    setSignInState(SignInState.ERROR) ;
   }
 
   function onCatch(value) {
     console.log ("Google API puked. " + value) ;
-    setGoogleSignInState(GoogleSignInState.CATCH) ;
+    setSignInState(SignInState.CATCH) ;
   }
 
   React.useEffect(() => {
@@ -76,15 +74,15 @@ function GoogleSignIn() {
 // eslint-disable-next-line
   },[gapi]) ;
 
-  if (googleSignInState === GoogleSignInState.INIT) {
+  if (signInState === SignInState.INIT) {
     return (
       <div id='GoogleSignInButton'/>
     ) ;
   }
 
-  if (googleSignInState === GoogleSignInState.SUCCESS) {
+  if (signInState === SignInState.SUCCESS) {
     return (
-      <div>Hello {givenName} {familyName}!!</div>
+      <div>Hello {signInName.givenName} {signInName.familyName}!!</div>
     ) ;
   }
 
