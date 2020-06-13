@@ -1,49 +1,28 @@
-import React from 'react';
-import axios from 'axios';
+// import React from 'react';
+// import { useHistory } from "react-router-dom";
 
 // Google Sign In Component
 
-function GoogleSignIn() {
+function GoogleSignIn(props) {
+//   const history = useHistory();
 
-  function onGetTokenSuccess(response){
-    console.log ("Google sign in success");
-    console.log(response);
-  }
+  if (! props.authorized) {
+    let client_id = '1086335094551-q0vbi5a05o2dghg1nge2ejkg5oqvkilm.apps.googleusercontent.com';
+    let url = new URL('https://accounts.google.com/o/oauth2/v2/auth');
+    url.searchParams.set('scope', 'email profile openid');
+    url.searchParams.set('response_type', 'token');
+    url.searchParams.set('state', 'random_value_here');
+    url.searchParams.set('redirect_uri', 'https://www.kyru.io/oauth2/google');
+    url.searchParams.set('client_id', client_id);
   
-  function onGetTokenError(error){
-    console.log ("Google sign in error");
-    console.log(error);
+    let path = encodeURI(url);
+    console.log("Signing in to google");
+    console.log(path);
+  
+    window.location.href = path ;
   }
 
-  function onGetTokenCatch(error){
-    console.log ("Google sign in exception");
-    console.log(error);
-  }
-
-  function onClick() {
-    let client_id='1086335094551-q0vbi5a05o2dghg1nge2ejkg5oqvkilm.apps.googleusercontent.com';
-    let url= {
-               method: 'get',
-               url: 'https://accounts.google.com/o/oauth2/v2/auth',
-               params: {
-                 scope: 'email profile openid',
-                 response_type: 'token',
-                 state: 'random_value_here',
-                 redirect_uri: 'https://www.kyru.io',
-                 client_id: client_id,
-               },
-             } ;
-
-    axios(url)
-    .then(onGetTokenSuccess,onGetTokenError)
-    .catch(onGetTokenCatch);
-  }
-
-  return (
-    <div>
-      <button onClick={onClick}>Google Sign In</button>
-    </div>
-  ) ;
+  return null ;
 }
 
 export default GoogleSignIn;

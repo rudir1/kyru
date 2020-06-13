@@ -1,11 +1,44 @@
 import React from 'react';
-import Main from './Main';
+import Login from './Login';
+// import Main from './Main';
+import GoogleSignIn from './GoogleSignIn';
+import RachioSignIn from './RachioSignIn';
+import WirelessTagSignIn from './WirelessTagSignIn';
+import { Switch, Route } from "react-router-dom";
+
 import './App.css';
 
 function App() {
+  const [googleAuthorized, setGoogleAuthorized] = React.useState(false) ;
+
+  function GoogleOAuth2Response () {
+    console.log ("Google authentication successfull.") ;
+    setGoogleAuthorized(true);
+    return (<div></div>);
+  }
+
   return (
     <div className="App">
-      <Main />
+      <Switch>
+        <Route path="/oauth2/google">
+          <GoogleOAuth2Response/>
+        </Route>
+        <Route path="/google-signin">
+          <GoogleSignIn authorized={googleAuthorized}/>
+        </Route>
+        <Route path="/rachio-signin">
+          <RachioSignIn/>
+        </Route>
+        <Route path="/wirelesstag-signin">
+          <WirelessTagSignIn/>
+        </Route>
+        <Route path="/login">
+          <Login/>
+        </Route>
+        <Route path="/">
+          <Login/>
+        </Route>
+      </Switch>
     </div>
   );
 }
