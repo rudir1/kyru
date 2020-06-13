@@ -35,8 +35,8 @@ function Login() {
   function handleGoogleSignInButtonClick() {
     // history.push("/google-signin") ;
 
-    let client_id = '1086335094551-q0vbi5a05o2dghg1nge2ejkg5oqvkilm.apps.googleusercontent.com';
-    let config = {
+    let client_id = '1086335094551-irvr0dt2o3ra6r4vtpj27e9ul5qtre97.apps.googleusercontent.com';
+    let url = {
       url: 'https://accounts.google.com/o/oauth2/v2/auth',
       method: 'get',
       params: {
@@ -46,10 +46,9 @@ function Login() {
         redirect_uri: 'https://www.kyru.io/oauth2/google',
         client_id: client_id,
       },
-      withCredentials: true
     };
-    axios(config)
-    .then(handleResponse, handleError)
+    axios(url)
+    .then(handleResponse,handleError)
     .catch(handleError) ;
   }
 
