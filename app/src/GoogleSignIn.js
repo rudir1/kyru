@@ -12,7 +12,7 @@ function GoogleSignIn(props) {
     url.searchParams.set('scope', 'email profile openid');
     url.searchParams.set('response_type', 'token');
     url.searchParams.set('state', 'random_value_here');
-    url.searchParams.set('redirect_uri', 'https://www.kyru.io');
+    url.searchParams.set('redirect_uri', 'https://www.kyru.io/oauth2/google');
     url.searchParams.set('client_id', client_id);
   
     let path = encodeURIComponent(url);
