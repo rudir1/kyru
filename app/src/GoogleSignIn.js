@@ -15,7 +15,7 @@ function GoogleSignIn(props) {
     url.searchParams.set('redirect_uri', 'https://www.kyru.io');
     url.searchParams.set('client_id', client_id);
   
-    let path = encodeURI(url);
+    let path = encodeURIComponent(url);
     console.log("Signing in to google");
     console.log(path);
   
