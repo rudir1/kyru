@@ -10,6 +10,7 @@ import './App.css';
 
 function App() {
   const [googleAuthorized, setGoogleAuthorized] = React.useState(false) ;
+  //const [showGoogleSignIn, setShowGoogleSignIn] = React.useState(false) ;
 
   function GoogleOAuth2Response () {
     console.log ("Google authentication successfull.") ;
@@ -24,7 +25,7 @@ function App() {
           <GoogleOAuth2Response/>
         </Route>
         <Route path="/google-signin">
-          <GoogleSignIn authorized={googleAuthorized}/>
+          <GoogleSignIn authorized={false} show={true}/>
         </Route>
         <Route path="/rachio-signin">
           <RachioSignIn/>

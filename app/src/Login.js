@@ -1,6 +1,6 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import axios from 'axios';
+// import axios from 'axios';
 
 function Login() {
   const history = useHistory();
@@ -33,8 +33,9 @@ function Login() {
   }
 
   function handleGoogleSignInButtonClick() {
-    // history.push("/google-signin") ;
+    history.push("/google-signin") ;
 
+/*
     let client_id = '1086335094551-irvr0dt2o3ra6r4vtpj27e9ul5qtre97.apps.googleusercontent.com';
     let url = {
       url: 'https://accounts.google.com/o/oauth2/v2/auth',
@@ -50,6 +51,7 @@ function Login() {
     axios(url)
     .then(handleResponse,handleError)
     .catch(handleError) ;
+*/
   }
 
   function handleRachioSignInButtonClick () {
