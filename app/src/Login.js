@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 
 function Login() {
   const history = useHistory();
-
+/*
   function handleResponse(response) {
     console.log("data: " + response.data);
     console.log("status: " + response.status);
@@ -31,7 +31,7 @@ function Login() {
     }
     console.log(error.config);
   }
-
+*/
   function handleKyruSignInButtonClick() {
     history.push("/kyru-signin") ;
   }
