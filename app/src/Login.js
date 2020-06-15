@@ -32,26 +32,8 @@ function Login() {
     console.log(error.config);
   }
 
-  function handleGoogleSignInButtonClick() {
-    history.push("/google-signin") ;
-
-/*
-    let client_id = '1086335094551-irvr0dt2o3ra6r4vtpj27e9ul5qtre97.apps.googleusercontent.com';
-    let url = {
-      url: 'https://accounts.google.com/o/oauth2/v2/auth',
-      method: 'get',
-      params: {
-        scope: 'email profile openid',
-        response_type: 'token',
-        state: 'random_value_here',
-        redirect_uri: 'https://www.kyru.io/oauth2/google',
-        client_id: client_id,
-      },
-    };
-    axios(url)
-    .then(handleResponse,handleError)
-    .catch(handleError) ;
-*/
+  function handleKyruSignInButtonClick() {
+    history.push("/kyru-signin") ;
   }
 
   function handleRachioSignInButtonClick () {
@@ -64,7 +46,7 @@ function Login() {
 
   return (
     <div>
-      <button onClick={handleGoogleSignInButtonClick}>Google Sign In</button>
+      <button onClick={handleKyruSignInButtonClick}>Kyru Sign In</button>
       <button onClick={handleRachioSignInButtonClick}>Rachio Sign In</button>
       <button onClick={handleWirelessTagSignInButtonClick}>Wireless Tag Sign In</button>
     </div>

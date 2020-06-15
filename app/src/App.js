@@ -1,7 +1,7 @@
 import React from 'react';
 import Login from './Login';
-// import Main from './Main';
-import GoogleSignIn from './GoogleSignIn';
+import Main from './Main';
+import KyruSignIn from './KyruSignIn';
 import RachioSignIn from './RachioSignIn';
 import WirelessTagSignIn from './WirelessTagSignIn';
 import { Switch, Route } from "react-router-dom";
@@ -9,35 +9,55 @@ import { Switch, Route } from "react-router-dom";
 import './App.css';
 
 function App() {
-  const [googleAuthorized, setGoogleAuthorized] = React.useState(false) ;
-  //const [showGoogleSignIn, setShowGoogleSignIn] = React.useState(false) ;
+  const [kyruAuthorized, setKyruAuthorized] = React.useState(false) ;
+  const [rachioAuthorized, setRachioAuthorized] = React.useState(false) ;
+  const [wirelessTagAuthorized, setWirelessTagAuthorized] = React.useState(false) ;
+  // const history = useHistory() ;
 
-  function GoogleOAuth2Response () {
-    console.log ("Google authentication successfull.") ;
-    setGoogleAuthorized(true);
+  function KyruOAuth2Response () {
+    console.log ("Kyru authentication successfull.") ;
+    setKyruAuthorized(true);
+    return (<div></div>);
+  }
+
+  function RachioOAuth2Response () {
+    console.log ("Rachio authentication successfull.") ;
+    setRachioAuthorized(true);
+    return (<div></div>);
+  }
+
+  function WirelessTagOAuth2Response () {
+    console.log ("Wireless Tag authentication successfull.") ;
+    setWirelessTagAuthorized(true);
     return (<div></div>);
   }
 
   return (
     <div className="App">
       <Switch>
-        <Route path="/oauth2/google">
-          <GoogleOAuth2Response/>
+        <Route path="/oauth2/kyru">
+          <KyruOAuth2Response/>
         </Route>
-        <Route path="/google-signin">
-          <GoogleSignIn authorized={false} show={true}/>
+        <Route path="/oauth2/rachio">
+          <RachioOAuth2Response/>
         </Route>
-        <Route path="/rachio-signin">
+        <Route path="/oauth2/wirelesstag">
+          <WirelessTagOAuth2Response/>
+        </Route>
+        <Route path="/kyru-signin">
+          <KyruSignIn authorized={kyruAuthorized}/>
+        </Route>
+        <Route path="/rachio-signin" authorized={rachioAuthorized}>
           <RachioSignIn/>
         </Route>
         <Route path="/wirelesstag-signin">
-          <WirelessTagSignIn/>
+          <WirelessTagSignIn authorized={wirelessTagAuthorized}/>
         </Route>
         <Route path="/login">
           <Login/>
         </Route>
         <Route path="/">
-          <Login/>
+          <Main/>
         </Route>
       </Switch>
     </div>

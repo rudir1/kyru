@@ -1,7 +1,5 @@
 import React from 'react';
 
-// enumerator for google load state
-
 function Main() {
   const [count, setCount] = React.useState(0) ;
 
