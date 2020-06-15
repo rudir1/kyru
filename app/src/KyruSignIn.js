@@ -8,7 +8,7 @@ function KyruSignIn(props) {
       let client_id = '16l7u0di6lr7f4rg2ap4lhkj6';
       let url = new URL('https://auth.kyru.io/oauth2/authorize');
       url.searchParams.set('scope', 'email profile openid');
-      url.searchParams.set('response_type', 'token');
+      url.searchParams.set('response_type', 'code');
       url.searchParams.set('state', 'random_value_here');
       url.searchParams.set('redirect_uri', 'https://www.kyru.io/oauth2/kyru');
       url.searchParams.set('client_id', client_id);
