@@ -1,30 +1,17 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import Amplify, { Auth } from 'aws-amplify';
-
-// Type of Sign In Component to display
-
-const KyruSignInType = {
-SIGN_IN: 'signin',
-SIGN_OUT: 'signout',
-CHANGE_PASSWORD: 'changepassword',
-FORGOT_PASSWORD: 'forgotpassword',
-COMPLETE_NEW_PASSWORD: 'completenewpassword',
-DONE: 'done'
-}
-Object.freeze(KyruSignInType);
+import { Switch, Route } from "react-router-dom";
 
 // Kyru Sign In Component
 
 function KyruSignIn(props) {
   const history = useHistory() ;
   const authErrorRef = React.useRef(null) ;
-  const signInTypeRef = React.useRef(props.signInType) ;
 
-  React.useEffect(() => {}, [signInTypeRef, authErrorRef]) ;
+  // React.useEffect(() => {}, [signInTypeRef, authErrorRef]) ;
 
 Amplify.configure({
-
     Auth: {
 
         // REQUIRED only for Federated Authentication - Amazon Cognito Identity Pool ID
@@ -41,7 +28,7 @@ Amplify.configure({
         userPoolId: 'us-west-2_gaxiIGccJ',
 
         // OPTIONAL - Amazon Cognito Web Client ID (26-char alphanumeric string)
-        userPoolWebClientId: '16l7u0di6lr7f4rg2ap4lhkj6',
+        userPoolWebClientId: '45v2vr8g8pdaj0r48pmmsag4mj',
 
         // OPTIONAL - Enforce user authentication prior to accessing AWS resources or not
         mandatorySignIn: true,
@@ -72,9 +59,8 @@ Amplify.configure({
         // OPTIONAL - Hosted UI configuration
         // oauth: {
         //     domain: 'auth.kyru.io',
-        //     scope: ['phone', 'email', 'profile', 'openid'],
-        //     redirectSignIn: 'http://auth.kyru.io/login',
-        //     redirectSignUp: 'http://auth.kyru.io/login',
+        //     scope: ['email', 'profile', 'openid'],
+        //     redirectSignIn: 'http://kyru.io/oauth2/kyru',
         //     redirectSignOut: 'http://kyru.io',
         //     responseType: 'code' // or 'token', note that REFRESH token will only be generated when the responseType is code
         // }
@@ -83,18 +69,28 @@ Amplify.configure({
 
   // error handler
   function handleError(error) {
-    console.log('error: ' + error.toString());
-    authErrorRef.current = error ;
+    authErrorRef.current = JSON.stringify(error);
+    console.log('error: ', authErrorRef.current);
   }
  
   // error handler
   function handleSuccess(success) {
-    console.log('success: ' + success);
+    console.log('success: ', JSON.stringify (success));
     authErrorRef.current = null ;
     history.replace("/main") ;
-    signInTypeRef.current = KyruSignInType.DONE ;
   }
  
+  // handle sign up success
+  function handleSignUpSuccess(success) {
+    console.log('success: ', JSON.stringify (success));
+    history.replace("/main") ;
+  }
+
+  // handle sign up error
+  function handleSignUpError(error) {
+    console.log(this.name + ': ', JSON.stringify (error));
+  }
+
   // sign up
   function handleSignUp() {
     const email = document.getElementById('email').value ;
@@ -104,17 +100,15 @@ Amplify.configure({
             'password': password,
             attributes: {
                 'email': email,          // optional
-                // phone_number,   // optional - E.164 number convention
-                // other custom attributes 
             }
     })
-    .then(handleSuccess)
-    .catch(handleError) ;
+    .then(handleSignUpSuccess)
+    .catch(handleSignUpError) ;
   }
 
   // refresh the component to request a new password
   function handleNewPasswordRequired() {
-    signInTypeRef.current = KyruSignInType.NEW_PASSWORD_REQUIRED ;
+    history.push("/newpasswordrequired") ;
   }
 
   // complete new password
@@ -126,11 +120,23 @@ Amplify.configure({
     .catch(handleError) ;
   }
 
+  // challenge name successful
+  function handleChallengeNameSuccess(user) {
+    console.log(this.name + ': ', JSON.stringify (user));
+    history.replace('/main');
+  }
+
+  // implement a challenge
   function handleChallengeName(user) {
     if (user.challengeName === 'NEW_PASSWORD_REQUIRED')
       handleNewPasswordRequired();
     else
-      handleSuccess(user);
+      handleChallengeNameSuccess(user);
+  }
+
+  // handle sign in error
+  function handleSignInError(error) {
+    console.log(this.name + ': ', JSON.stringify (error));
   }
 
   // sign in
@@ -139,7 +145,7 @@ Amplify.configure({
     const password = document.getElementById('password').value ;
     Auth.signIn(email, password)
     .then(handleChallengeName)
-    .catch (handleError) ;
+    .catch (handleSignInError) ;
   }
 
 // change password
@@ -152,12 +158,20 @@ Amplify.configure({
       .catch(handleError);
   }
 
+  function handleForgotPasswordResponse(response) {
+    history.push('/kyru/forgotpassword') ;
+  }
+
+  function handleForgotPasswordError(error) {
+    history.replace ('/kyru/signin') ;
+  }
+
 // forgot password
   function handleForgotPassword() {
     const email = document.getElementById('email').value ;
     Auth.forgotPassword(email)
-    .then((user) => { signInTypeRef.current = KyruSignInType.FORGOT_PASSWORD; })
-    .catch(handleError);
+    .then(handleForgotPasswordResponse)
+    .catch(handleForgotPasswordError);
   }
 
 // Collect confirmation code and new password
@@ -171,27 +185,25 @@ Amplify.configure({
   }
 
   // display an authentication error
-  function InsertAuthError () {
-    if (authErrorRef.current) {
-      return (
-      <div>
-        <label>authErrorRef.current</label><br></br> ;
-      </div>
-      );
-    }
-    else {
-      return null ;
-    }
-  }
-
-  // render
-  if (signInTypeRef.current === KyruSignInType.DONE) {
-    return null ;
-  }
-  else if (signInTypeRef.current === KyruSignInType.SIGN_IN) {
+  function InsertAuthError (props) {
     return (
       <div>
-        <InsertAuthError/>
+        <label>{props.error}</label><br></br>
+      </div>
+    );
+  }
+
+  let error = null ;
+
+  if (authErrorRef !== null) {
+    error = JSON.stringify(authErrorRef.current);
+    console.log ("Valid authError: ", error) ;
+  }
+
+  // sign in
+  function SignIn () {
+    return (
+      <div>
         <form id="signin">
           <label>Email address:</label>
           <input type="email" id="email" name="email"></input>
@@ -205,11 +217,12 @@ Amplify.configure({
         </form>
       </div>
     ) ;
-  }
-  else if (signInTypeRef.current === KyruSignInType.CHANGE_PASSWORD) {
+  } ;
+
+  // change password
+  function ChangePassword () {
     return (
       <div>
-        <InsertAuthError/>
         <form id="changepassword">
           <label>Old password:</label>
           <input type="password" id="oldpassword" name="old password"></input>
@@ -222,7 +235,8 @@ Amplify.configure({
       </div>
     ) ;
   }
-  else if (signInTypeRef.current === KyruSignInType.FORGOT_PASSWORD) {
+
+  function ForgotPassword () {
     return (
       <div>
         <InsertAuthError/>
@@ -241,7 +255,8 @@ Amplify.configure({
       </div>
     ) ;
   }
-  else if (signInTypeRef.current === KyruSignInType.COMPLETE_NEW_PASSWORD) {
+
+  function NewPasswordRequired () {
     return (
       <div>
         <InsertAuthError/>
@@ -254,6 +269,26 @@ Amplify.configure({
       </div>
     );
   }
+
+  // render
+  return (
+    <div className="KyruSignInSwitch">
+      <Switch>
+        <Route path="/kyru/signin">
+          <SignIn/>
+        </Route>
+        <Route path="/kyru/changepassword">
+          <ChangePassword/>
+        </Route>
+        <Route path="/kyru/forgotpassword">
+          <ForgotPassword/>
+        </Route>
+        <Route path="/kyru/newpasswordrequired">
+          <NewPasswordRequired/>
+        </Route>
+      </Switch>
+    </div>
+  ) ;
 }
 
-export { KyruSignIn, KyruSignInType} ;
+export default KyruSignIn;

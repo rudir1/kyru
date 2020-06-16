@@ -1,7 +1,7 @@
 import React from 'react';
 import Login from './Login';
 import Main from './Main';
-import { KyruSignIn, KyruSignInType } from './KyruSignIn';
+import KyruSignIn from './KyruSignIn';
 import RachioSignIn from './RachioSignIn';
 import WirelessTagSignIn from './WirelessTagSignIn';
 import { Switch, Route } from "react-router-dom";
@@ -10,8 +10,8 @@ import './App.css';
 
 function App() {
   // const [kyruAuthorized, setKyruAuthorized] = React.useState(false) ;
-  const [rachioAuthorized, setRachioAuthorized] = React.useState(false) ;
-  const [wirelessTagAuthorized, setWirelessTagAuthorized] = React.useState(false) ;
+  // const [rachioAuthorized, setRachioAuthorized] = React.useState(false) ;
+  // const [wirelessTagAuthorized, setWirelessTagAuthorized] = React.useState(false) ;
   // const history = useHistory() ;
 
   function KyruOAuth2Response () {
@@ -22,18 +22,20 @@ function App() {
 
   function RachioOAuth2Response () {
     console.log ("Rachio authentication successfull.") ;
-    setRachioAuthorized(true);
+    // setRachioAuthorized(true);
     return (<div></div>);
   }
 
   function WirelessTagOAuth2Response () {
     console.log ("Wireless Tag authentication successfull.") ;
-    setWirelessTagAuthorized(true);
+    // setWirelessTagAuthorized(true);
     return (<div></div>);
   }
 
+  console.log ("In App!!") ;
+
   return (
-    <div className="App">
+    <div className="AppSwitch">
       <Switch>
         <Route path="/oauth2/kyru">
           <KyruOAuth2Response/>
@@ -44,14 +46,14 @@ function App() {
         <Route path="/oauth2/wirelesstag">
           <WirelessTagOAuth2Response/>
         </Route>
-        <Route path="/kyru-signin">
-          <KyruSignIn signInType={KyruSignInType.SIGN_IN}/>
+        <Route path="/kyru/signin">
+          <KyruSignIn/>
         </Route>
-        <Route path="/rachio-signin" authorized={rachioAuthorized}>
+        <Route path="/rachio/signin">
           <RachioSignIn/>
         </Route>
-        <Route path="/wirelesstag-signin">
-          <WirelessTagSignIn authorized={wirelessTagAuthorized}/>
+        <Route path="/wirelesstag/signin">
+          <WirelessTagSignIn/>
         </Route>
         <Route path="/login">
           <Login/>

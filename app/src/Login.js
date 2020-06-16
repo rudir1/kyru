@@ -33,15 +33,15 @@ function Login() {
   }
 */
   function handleKyruSignInButtonClick() {
-    history.push("/kyru-signin") ;
+    history.push("/kyru/signin") ;
   }
 
   function handleRachioSignInButtonClick () {
-    history.push("/rachio-signin") ;
+    history.push("/rachio/signin") ;
   }
 
   function handleWirelessTagSignInButtonClick () {
-    history.push("/wirelesstag-signin") ;
+    history.push("/wirelesstag/signin") ;
   }
 
   return (
