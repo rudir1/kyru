@@ -1,31 +1,14 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import Amplify, { Auth } from 'aws-amplify';
 
 // Kyru Sign In Component
 
 function KyruSignIn(props) {
-/*
-  React.useEffect(() => {
-    if (!props.authorized) {
-      let client_id = '16l7u0di6lr7f4rg2ap4lhkj6';
-      let url = new URL('https://auth.kyru.io/oauth2/authorize');
-      url.searchParams.set('scope', 'email profile openid');
-      url.searchParams.set('response_type', 'code');
-      url.searchParams.set('state', 'random_value_here');
-      url.searchParams.set('redirect_uri', 'https://www.kyru.io/oauth2/kyru');
-      url.searchParams.set('client_id', client_id);
-    
-      console.log("Signing in to kyru");
-      console.log(url);
-
-      window.location.assign(url) ;
-    }
-
-    return null ;
-  }, [props]);
-*/
+  const history = useHistory() ;
 
 Amplify.configure({
+
     Auth: {
 
         // REQUIRED only for Federated Authentication - Amazon Cognito Identity Pool ID
@@ -70,14 +53,15 @@ Amplify.configure({
         // OPTIONAL - Manually set key value pairs that can be passed to Cognito Lambda Triggers
         // clientMetadata: { myCustomKey: 'myCustomValue' },
 
-         // OPTIONAL - Hosted UI configuration
-        oauth: {
-            domain: 'auth.kyru.io',
-            scope: ['phone', 'email', 'profile', 'openid'],
-            redirectSignIn: 'http://auth.kyru.io/oauth2/kyru',
-            redirectSignOut: 'http://kyru.io',
-            responseType: 'code' // or 'token', note that REFRESH token will only be generated when the responseType is code
-        }
+        // OPTIONAL - Hosted UI configuration
+        // oauth: {
+        //     domain: 'auth.kyru.io',
+        //     scope: ['phone', 'email', 'profile', 'openid'],
+        //     redirectSignIn: 'http://auth.kyru.io/login',
+        //     redirectSignUp: 'http://auth.kyru.io/login',
+        //     redirectSignOut: 'http://kyru.io',
+        //     responseType: 'code' // or 'token', note that REFRESH token will only be generated when the responseType is code
+        // }
     }
 });
 
@@ -87,10 +71,10 @@ async function handleSignUp() {
         const email = document.getElementById('email').value ;
         const password = document.getElementById('password').value ;
         const user = await Auth.signUp({
-            email,
-            password,
+            'email': email,
+            'password': password,
             attributes: {
-                email,          // optional
+                'email': email,          // optional
                 // phone_number,   // optional - E.164 number convention
                 // other custom attributes 
             }
@@ -108,6 +92,8 @@ async function handleSignIn() {
         const password = document.getElementById('password').value ;
         const user = await Auth.signIn(email, password);
         console.log({ user });
+        history.push("/main") ;
+        return null ;
     } catch (error) {
         console.log('error signing in: ', error);
     }
