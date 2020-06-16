@@ -1,7 +1,7 @@
 import React from 'react';
 import Login from './Login';
 import Main from './Main';
-import KyruSignIn from './KyruSignIn';
+import { KyruSignIn, KyruSignInType } from './KyruSignIn';
 import RachioSignIn from './RachioSignIn';
 import WirelessTagSignIn from './WirelessTagSignIn';
 import { Switch, Route } from "react-router-dom";
@@ -9,14 +9,14 @@ import { Switch, Route } from "react-router-dom";
 import './App.css';
 
 function App() {
-  const [kyruAuthorized, setKyruAuthorized] = React.useState(false) ;
+  // const [kyruAuthorized, setKyruAuthorized] = React.useState(false) ;
   const [rachioAuthorized, setRachioAuthorized] = React.useState(false) ;
   const [wirelessTagAuthorized, setWirelessTagAuthorized] = React.useState(false) ;
   // const history = useHistory() ;
 
   function KyruOAuth2Response () {
     console.log ("Kyru authentication successfull.") ;
-    setKyruAuthorized(true);
+    // setKyruAuthorized(true);
     return (<div></div>);
   }
 
@@ -45,7 +45,7 @@ function App() {
           <WirelessTagOAuth2Response/>
         </Route>
         <Route path="/kyru-signin">
-          <KyruSignIn authorized={kyruAuthorized}/>
+          <KyruSignIn signInType={KyruSignInType.SIGN_IN}/>
         </Route>
         <Route path="/rachio-signin" authorized={rachioAuthorized}>
           <RachioSignIn/>

@@ -2,10 +2,26 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import Amplify, { Auth } from 'aws-amplify';
 
+// Type of Sign In Component to display
+
+const KyruSignInType = {
+SIGN_IN: 'signin',
+SIGN_OUT: 'signout',
+CHANGE_PASSWORD: 'changepassword',
+FORGOT_PASSWORD: 'forgotpassword',
+COMPLETE_NEW_PASSWORD: 'completenewpassword',
+DONE: 'done'
+}
+Object.freeze(KyruSignInType);
+
 // Kyru Sign In Component
 
 function KyruSignIn(props) {
   const history = useHistory() ;
+  const authErrorRef = React.useRef(null) ;
+  const signInTypeRef = React.useRef(props.signInType) ;
+
+  React.useEffect(() => {}, [signInTypeRef, authErrorRef]) ;
 
 Amplify.configure({
 
@@ -65,56 +81,179 @@ Amplify.configure({
     }
 });
 
-// sign up
-async function handleSignUp() {
-    try {
-        const email = document.getElementById('email').value ;
-        const password = document.getElementById('password').value ;
-        const user = await Auth.signUp({
-            'email': email,
+  // error handler
+  function handleError(error) {
+    console.log('error: ' + error.toString());
+    authErrorRef.current = error ;
+  }
+ 
+  // error handler
+  function handleSuccess(success) {
+    console.log('success: ' + success);
+    authErrorRef.current = null ;
+    history.replace("/main") ;
+    signInTypeRef.current = KyruSignInType.DONE ;
+  }
+ 
+  // sign up
+  function handleSignUp() {
+    const email = document.getElementById('email').value ;
+    const password = document.getElementById('password').value ;
+    Auth.signUp({
+            'username': email,
             'password': password,
             attributes: {
                 'email': email,          // optional
                 // phone_number,   // optional - E.164 number convention
                 // other custom attributes 
             }
-        });
-        console.log({ user });
-    } catch (error) {
-        console.log('error signing up: ', error);
+    })
+    .then(handleSuccess)
+    .catch(handleError) ;
+  }
+
+  // refresh the component to request a new password
+  function handleNewPasswordRequired() {
+    signInTypeRef.current = KyruSignInType.NEW_PASSWORD_REQUIRED ;
+  }
+
+  // complete new password
+  function handleCompleteNewPassword() {
+    const newPassword = document.getElementById('newpassword').value ;
+    Auth.currentAuthenticatedUser()
+    .then (user => Auth.completeNewPassword(user, newPassword))
+    .then(handleSuccess)
+    .catch(handleError) ;
+  }
+
+  function handleChallengeName(user) {
+    if (user.challengeName === 'NEW_PASSWORD_REQUIRED')
+      handleNewPasswordRequired();
+    else
+      handleSuccess(user);
+  }
+
+  // sign in
+  function handleSignIn() {
+    const email = document.getElementById('email').value ;
+    const password = document.getElementById('password').value ;
+    Auth.signIn(email, password)
+    .then(handleChallengeName)
+    .catch (handleError) ;
+  }
+
+// change password
+  function handleChangePassword() {
+      const oldPassword = document.getElementById('oldpassword').value ;
+      const newPassword = document.getElementById('newpassword').value ;
+      Auth.currentAuthenticatedUser()
+      .then((user) => { Auth.changePassword(user, oldPassword, newPassword); })
+      .then(handleSuccess)
+      .catch(handleError);
+  }
+
+// forgot password
+  function handleForgotPassword() {
+    const email = document.getElementById('email').value ;
+    Auth.forgotPassword(email)
+    .then((user) => { signInTypeRef.current = KyruSignInType.FORGOT_PASSWORD; })
+    .catch(handleError);
+  }
+
+// Collect confirmation code and new password
+  function handleForgotPasswordSubmit() {
+    const email = document.getElementById('email').value ;
+    const newPassword = document.getElementById('newpassword').value ;
+    const code = document.getElementById('code').value ;
+    Auth.forgotPasswordSubmit(email, code, newPassword)
+    .then(handleSuccess)
+    .catch(handleError);
+  }
+
+  // display an authentication error
+  function InsertAuthError () {
+    if (authErrorRef.current) {
+      return (
+      <div>
+        <label>authErrorRef.current</label><br></br> ;
+      </div>
+      );
     }
-}
-
-// sign in
-async function handleSignIn() {
-    try {
-        const email = document.getElementById('email').value ;
-        const password = document.getElementById('password').value ;
-        const user = await Auth.signIn(email, password);
-        console.log({ user });
-        history.push("/main") ;
-        return null ;
-    } catch (error) {
-        console.log('error signing in: ', error);
+    else {
+      return null ;
     }
+  }
+
+  // render
+  if (signInTypeRef.current === KyruSignInType.DONE) {
+    return null ;
+  }
+  else if (signInTypeRef.current === KyruSignInType.SIGN_IN) {
+    return (
+      <div>
+        <InsertAuthError/>
+        <form id="signin">
+          <label>Email address:</label>
+          <input type="email" id="email" name="email"></input>
+          <br></br>
+          <label>Password:</label>
+          <input type="password" id="password" name="password"></input>
+          <br></br>
+          <input type="submit" value="Sign In" onClick={handleSignIn}></input>
+          <input type="submit" value="Sign Up" onClick={handleSignUp}></input>
+          <input type="submit" value="Forgot password" onClick={handleForgotPassword}></input>
+        </form>
+      </div>
+    ) ;
+  }
+  else if (signInTypeRef.current === KyruSignInType.CHANGE_PASSWORD) {
+    return (
+      <div>
+        <InsertAuthError/>
+        <form id="changepassword">
+          <label>Old password:</label>
+          <input type="password" id="oldpassword" name="old password"></input>
+          <br></br>
+          <label>New password:</label>
+          <input type="password" id="newpassword" name="new password"></input>
+          <br></br>
+          <input type="submit" value="Change password" onClick={handleChangePassword}></input>
+        </form>
+      </div>
+    ) ;
+  }
+  else if (signInTypeRef.current === KyruSignInType.FORGOT_PASSWORD) {
+    return (
+      <div>
+        <InsertAuthError/>
+        <form id="forgotpassword">
+          <label>Verification code:</label>
+          <input type="text" id="code" name="code"></input>
+          <br></br>
+          <label>Email address:</label>
+          <input type="email" id="email" name="email"></input>
+          <br></br>
+          <label>New password:</label>
+          <input type="password" id="newpassword" name="new password"></input>
+          <br></br>
+          <input type="submit" value="Forgot password" onClick={handleForgotPasswordSubmit}></input>
+        </form>
+      </div>
+    ) ;
+  }
+  else if (signInTypeRef.current === KyruSignInType.COMPLETE_NEW_PASSWORD) {
+    return (
+      <div>
+        <InsertAuthError/>
+        <form id="newpasswordrequired">
+          <label>New password:</label>
+          <input type="password" id="newpassword" name="new password"></input>
+          <br></br>
+          <input type="submit" value="New password" onClick={handleCompleteNewPassword}></input>
+        </form>
+      </div>
+    );
+  }
 }
 
-
-  return (
-    <div>
-      <form id="signin">
-        <label>Email address:</label>
-        <input type="email" id="email" name="email"></input>
-        <br></br>
-        <label>Password:</label>
-        <input type="password" id="password" name="password"></input>
-        <br></br>
-        <input type="submit" value="Sign In" onClick={handleSignIn}></input>
-        <input type="submit" value="Sign Up" onClick={handleSignUp}></input>
-        <input type="submit" value="Forgot password"></input>
-      </form>
-    </div>
-  ) ;
-}
-
-export default KyruSignIn;
+export { KyruSignIn, KyruSignInType} ;
