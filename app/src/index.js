@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter } from "react-router-dom";
 import { RecoilRoot } from 'recoil';
 import './index.css';
 import App from './App';
@@ -69,9 +68,9 @@ Amplify.configure({
 ReactDOM.render(
   <React.StrictMode>
     <RecoilRoot>
-      <BrowserRouter>
+      <React.Suspense fallback={<div>Signing in ...</div>}>
         <App />
-      </BrowserRouter>
+      </React.Suspense>
     </RecoilRoot>
   </React.StrictMode>,
   document.getElementById('root')

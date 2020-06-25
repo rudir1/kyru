@@ -14,23 +14,19 @@ export const passwordValue = Recoil.atom({
 
 export const isAuthenticated = Recoil.selector({
     key: 'isAuthenticated',
-    get: async ({get}) => { return await Auth.currentAuthenticatedUser() ; }
+    get: async ({get}) => {
+      return await Auth.currentAuthenticatedUser() ;
+    }
   });
 
-/*
-  const signInO = Recoil.selector({
-    key: 'SignIn',
+export const signIn = Recoil.selector({
+    key: 'signIn',
     get: async ({get}) => {
-      return await myAsyncQuery(get(queryParamState));
-  }
-});
-      Auth.signIn(
-        input.email,
-        input.password
-      )
-      .then(handleChallengeName)
-      .catch (handleSignInError) ;
-*/
+      return await Auth.signIn(get(emailValue),get(passwordValue)) ;
+    }
+  });
+
+
 // function KyruSignIn(props) {
 //   const history = useHistory() ;
 //   const [input, setInput] = React.useState({
