@@ -13,7 +13,7 @@ Amplify.configure({
     Auth: {
 
         // REQUIRED only for Federated Authentication - Amazon Cognito Identity Pool ID
-        // identityPoolId: 'XX-XXXX-X:XXXXXXXX-XXXX-1234-abcd-1234567890ab',
+        identityPoolId: 'us-west-2:0af4dcbd-bd92-4252-8dfc-9ca122116882',
 
         // REQUIRED - Amazon Cognito Region
         region: 'us-west-2',
@@ -33,17 +33,17 @@ Amplify.configure({
 
         // OPTIONAL - Configuration for cookie storage
         // Note: if the secure flag is set to true, then the cookie transmission requires a secure protocol
-        cookieStorage: {
+        // cookieStorage: {
         // REQUIRED - Cookie domain (only required if cookieStorage is provided)
-            domain: '.kyru.io',
+        //     domain: '.kyru.io',
         // OPTIONAL - Cookie path
-            path: '/',
+        //     path: '/',
         // OPTIONAL - Cookie expiration in days
-            expires: 365,
+        //     expires: 365,
         // OPTIONAL - Cookie secure flag
         // Either true or false, indicating if the cookie transmission requires a secure protocol (https).
-            secure: true
-        },
+        //     secure: true
+        // },
 
         // OPTIONAL - customized storage object
         // storage: new MyStorage(),
@@ -68,9 +68,7 @@ Amplify.configure({
 ReactDOM.render(
   <React.StrictMode>
     <RecoilRoot>
-      <React.Suspense fallback={<div>Signing in ...</div>}>
-        <App />
-      </React.Suspense>
+      <App />
     </RecoilRoot>
   </React.StrictMode>,
   document.getElementById('root')

@@ -1,14 +1,31 @@
 import React from 'react';
-import { Grid, TextField, FormLabel, Button, FormControl, InputLabel, InputAdornment, OutlinedInput, IconButton } from '@material-ui/core';
+import { Grid, TextField, FormLabel, Button, FormControl, InputLabel, InputAdornment, OutlinedInput, IconButton, Link } from '@material-ui/core';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
 import 'fontsource-roboto';
 import Recoil from 'recoil';
-import { emailValue, passwordValue } from './kyru-auth';
+import { Auth } from 'aws-amplify';
+import { isAuthenticatedValue } from './kyru-auth';
+
+const SignInType = {
+SIGN_IN: "Sign In",
+SIGN_UP: "Sign Up",
+CONFIRM_SIGN_UP: "Confirm Sign Up",
+} ;
+Object.freeze(SignInType) ;
 
 function KyruSignIn () {
-  let [email, setEmail] = Recoil.useRecoilState(emailValue) ;
-  let [password, setPassword] = Recoil.useRecoilState(passwordValue) ;
+  let setIsAuthenticated = Recoil.useSetRecoilState(isAuthenticatedValue) ;
+  let [email, setEmail] = React.useState("") ;
+  let [password, setPassword] = React.useState("") ;
   let [showPassword, setShowPassword] = React.useState(false) ;
+  let [code, setCode] = React.useState("") ;
+  let [error, setError] = React.useState("") ;
+  let [signInType, setSignInType] = React.useState(SignInType.SIGN_IN) ;
+  let header = "" ; 
+  let signInButtonText = "" ; 
+
+  React.useEffect (() => {
+  }, [showPassword, email, password, code, error, signInType]) ;
 
   function handleEmailChange (event) {
     setEmail (event.target.value) ;
@@ -26,17 +43,81 @@ function KyruSignIn () {
     event.preventDefault();
   };
 
-  function handleClickButton (event) {
-    console.log ("Submit") ;
+  async function handleSignInClickButton (event) {
     event.preventDefault();
+
+    if (signInType === SignInType.SIGN_UP) {
+      try {
+        const result = await Auth.signUp({
+         'username': email,
+         'password': password,
+         attributes: {
+           'email': email,          // optional
+         }
+       }) ;
+       console.log ("Sign up success: ", result) ;
+       setSignInType(SignInType.CONFIRM_SIGN_UP) ;
+      }
+      catch (error) {
+        console.log ("Sign up failure: ", error) ;
+        setError ("Failed - " + error.message) ;
+      }
+    }
+    else if (signInType === SignInType.CONFIRM_SIGN_UP) {
+      try {
+        const result = Auth.confirmSignUp(email, code)
+        console.log ("Confirm sign up success: ", result) ;
+        setIsAuthenticated(true) ;
+      }
+      catch (error) {
+        console.log ("Confirm sign up failure: ", error) ;
+        setError ("Failed - " + error.message) ;
+      }
+    }
+    else {
+      try {
+        const user = await Auth.signIn(email, password) ;
+        console.log ("Sign in success: ", user) ;
+        setIsAuthenticated(true) ;
+      }
+      catch (error) {
+        console.log ("Sign in failure: ", error) ;
+        setError ("Failed - " + error.message) ;
+      }
+    }
+  }
+
+  async function handleSignUpClickButton (event) {
+    event.preventDefault();
+    setSignInType(SignInType.SIGN_UP) ;
+  }
+
+  if (signInType === SignInType.SIGN_UP) {
+    header = "Kyru Sign Up"
+    if (error !== "")
+      header = header + " " + error ;
+
+    signInButtonText = "Sign Up" ;
+  }
+  else if (signInType === SignInType.CONFIRM_SIGN_UP) {
+  }
+  else {
+    header = "Kyru Sign In"
+    if (error !== "")
+      header = header + " " + error ;
+
+    signInButtonText = "Sign In" ;
   }
 
   return (
+    <div>
+      <Grid container direction="column" justify="flex-end" alignItems="stretch" alignContent="center" spacing={4}>
+        <Grid item>
+          <FormLabel>{header}</FormLabel>
+        </Grid>
+      </Grid>
       <form>
         <Grid container direction="column" justify="flex-end" alignItems="stretch" alignContent="center" spacing={1}>
-          <Grid item>
-            <FormLabel>Kyru Sign In</FormLabel>
-          </Grid>
           <Grid item>
             <TextField label="Email Address" value={email} onChange={handleEmailChange} variant="outlined" type="email" fullWidth={true}/>
           </Grid>
@@ -64,10 +145,17 @@ function KyruSignIn () {
             </FormControl>
           </Grid>
           <Grid item>
-            <Button variant="contained" color="primary" fullWidth={true} onClick={handleClickButton}>Sign In</Button>
+            <Button variant="contained" color="primary" fullWidth={true} onClick={handleSignInClickButton}>{signInButtonText}</Button>
           </Grid>
+          {(signInType === SignInType.SIGN_IN) ?
+            <Grid item>
+              <Link onClick={handleSignUpClickButton}>Sign Up</Link>
+            </Grid> : 
+            <></>
+          }
         </Grid>
       </form>
+    </div>
   ) ;
 }
 

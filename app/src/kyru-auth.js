@@ -1,31 +1,9 @@
-import { Auth } from 'aws-amplify';
 import Recoil from 'recoil';
 
-  // email and password states in recoil
-export const emailValue = Recoil.atom({
-    key: 'emailValue',
-    default: '',
-  });
-  
-export const passwordValue = Recoil.atom({
-    key: 'passwordValue',
-    default: '',
-  });
-
-export const isAuthenticated = Recoil.selector({
-    key: 'isAuthenticated',
-    get: async ({get}) => {
-      return await Auth.currentAuthenticatedUser() ;
-    }
-  });
-
-export const signIn = Recoil.selector({
-    key: 'signIn',
-    get: async ({get}) => {
-      return await Auth.signIn(get(emailValue),get(passwordValue)) ;
-    }
-  });
-
+export const isAuthenticatedValue = Recoil.atom({
+  key: 'isAuthenticatedValue',
+  default: false,
+});
 
 // function KyruSignIn(props) {
 //   const history = useHistory() ;
