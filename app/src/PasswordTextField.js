@@ -15,7 +15,7 @@ export default function PasswordTextField (props) {
 
   return (
     <>
-            <FormControl variant="outlined">
+            <FormControl variant="outlined" fullWidth={true}>
               <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
               <OutlinedInput
                 label="Password"
