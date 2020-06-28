@@ -1,7 +1,8 @@
 import React from 'react';
 import { FormControl, InputLabel, InputAdornment, OutlinedInput, IconButton } from '@material-ui/core';
+import { Visibility, VisibilityOff } from '@material-ui/icons';
 
-function PasswordTextField (props) {
+export default function PasswordTextField (props) {
   let [showPassword, setShowPassword] = React.useState(false) ;
 
   function handleClickShowPassword (event) {
@@ -13,6 +14,7 @@ function PasswordTextField (props) {
   };
 
   return (
+    <>
             <FormControl variant="outlined">
               <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
               <OutlinedInput
@@ -34,5 +36,6 @@ function PasswordTextField (props) {
                 }
               />
             </FormControl>
+    </>
   ) ;
 }
