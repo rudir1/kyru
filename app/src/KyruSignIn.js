@@ -3,7 +3,7 @@ import { Grid, TextField, FormLabel, Button, Link } from '@material-ui/core';
 import 'fontsource-roboto';
 import Recoil from 'recoil';
 import { Auth } from 'aws-amplify';
-import { isAuthenticatedValue, userValue } from './kyru-auth';
+import { isAuthenticatedValue } from './kyru-auth';
 import PasswordTextField from './PasswordTextField';
 
 // type of sign in form
@@ -17,21 +17,20 @@ FORGOT_PASSWORD_SUBMIT: "Forgot Password Submit",
 Object.freeze(SignInType) ;
 
 function KyruSignIn () {
-  let [email, setEmail] = React.useState("") ;
+  let [username, setUsername] = React.useState("") ;
   let [password, setPassword] = React.useState("") ;
   let [code, setCode] = React.useState("") ;
   let [error, setError] = React.useState("") ;
   let [signInType, setSignInType] = React.useState(SignInType.SIGN_IN) ;
 
   let setIsAuthenticated = Recoil.useSetRecoilState(isAuthenticatedValue) ;
-  let [user, setUser] = Recoil.useRecoilState(userValue) ;
 
   let header = "" ; 
   let form ;
 
-  // handle keystrokes in email text field
-  function handleEmailChange (event) {
-    setEmail (event.target.value) ;
+  // handle keystrokes in username text field
+  function handleUsernameChange (event) {
+    setUsername (event.target.value) ;
   }
 
   // handle keystrokes in password text field
@@ -52,11 +51,10 @@ function KyruSignIn () {
 
     try {
       const result = await Auth.signUp({
-        'username': email,
+        'username': username,
         'password': password,
       }) ;
      console.log ("Sign up success: ", result) ;
-     setUser(result.user) ;
 
      if (result.userConfirmed === false)
        setSignInType(SignInType.CONFIRM_SIGN_UP) ;
@@ -68,14 +66,14 @@ function KyruSignIn () {
   }
 
   // handle confirm sign up button click
-  // using the code emailed by cognito
+  // using the code usernameed by cognito
   // asynchronously invoke cognito Auth
   async function handleClickButtonConfirmSignUp (event) {
     event.preventDefault();
     setError("") ;
 
     try {
-      const result = await Auth.confirmSignUp(email, code)
+      const result = await Auth.confirmSignUp(username, code)
       console.log ("Confirm sign up success: ", result) ;
       setIsAuthenticated(true) ;
     }
@@ -94,9 +92,8 @@ function KyruSignIn () {
     setError("") ;
 
     try {
-      const result = await Auth.signIn(email, password) ;
+      const result = await Auth.signIn(username, password) ;
       console.log ("Sign in success: ", result) ;
-      setUser(result) ;
 
       if (result.challengeName === 'NEW_PASSWORD_REQUIRED')
         setSignInType(SignInType.COMPLETE_NEW_PASSWORD) ;
@@ -117,7 +114,7 @@ function KyruSignIn () {
     setError("") ;
 
     try {
-      const result = await Auth.completeNewPassword (user, password)
+      const result = await Auth.completeNewPassword (username, password)
       console.log ("Complete new password success: ", result) ;
       setIsAuthenticated(true) ;
     }
@@ -134,7 +131,7 @@ function KyruSignIn () {
     setError("") ;
 
     try {
-      const result = await Auth.forgotPasswordSubmit (user, code, password)
+      const result = await Auth.forgotPasswordSubmit (username, code, password)
       console.log ("Forgot password submit success: ", result) ;
       setIsAuthenticated(true) ;
     }
@@ -167,7 +164,7 @@ function KyruSignIn () {
     setError("") ;
 
     try {
-      const result = await Auth.resendSignUp (email)
+      const result = await Auth.resendSignUp (username)
       console.log ("Send new code success: ", result) ;
     }
     catch (error) {
@@ -191,7 +188,7 @@ function KyruSignIn () {
     setError("") ;
 
     try {
-      const result = await Auth.forgotPassword (email) ;
+      const result = await Auth.forgotPassword (username) ;
       console.log ("Send new code success: ", result) ;
     }
     catch (error) {
@@ -223,7 +220,7 @@ function KyruSignIn () {
     form = (
       <>
         <Grid item>
-          <TextField label="Email Address" value={email} onChange={handleEmailChange} variant="outlined" type="email" fullWidth={true}/>
+          <TextField label="Email Address" value={username} onChange={handleUsernameChange} variant="outlined" type="username" fullWidth={true}/>
         </Grid>
         <Grid item>
           <PasswordTextField value={password} onChange={handlePasswordChange}/>
@@ -241,7 +238,7 @@ function KyruSignIn () {
     form = (
       <>
         <Grid item>
-          <TextField label="Email Address" value={email} onChange={handleEmailChange} variant="outlined" type="email" fullWidth={true}/>
+          <TextField label="Email Address" value={username} onChange={handleUsernameChange} variant="outlined" type="username" fullWidth={true}/>
         </Grid>
         <Grid item>
           <TextField label="Confirmation Code" value={code} onChange={handleCodeChange} variant="outlined" type="text" fullWidth={true}/>
@@ -259,7 +256,7 @@ function KyruSignIn () {
     form = (
       <>
         <Grid item>
-          <TextField label="Email Address" value={email} onChange={handleEmailChange} variant="outlined" type="email" fullWidth={true}/>
+          <TextField label="Email Address" value={username} onChange={handleUsernameChange} variant="outlined" type="username" fullWidth={true}/>
         </Grid>
         <Grid item>
           <TextField label="New Password" value={password} onChange={handlePasswordChange} variant="outlined" type="text" fullWidth={true}/>
@@ -274,7 +271,7 @@ function KyruSignIn () {
     form = (
       <>
         <Grid item>
-          <TextField label="Email Address" value={email} onChange={handleEmailChange} variant="outlined" type="email" fullWidth={true}/>
+          <TextField label="Email Address" value={username} onChange={handleUsernameChange} variant="outlined" type="username" fullWidth={true}/>
         </Grid>
         <Grid item>
           <TextField label="New Password" value={password} onChange={handlePasswordChange} variant="outlined" type="text" fullWidth={true}/>
@@ -296,7 +293,7 @@ function KyruSignIn () {
     form = (
       <>
         <Grid item>
-          <TextField label="Email Address" value={email} onChange={handleEmailChange} variant="outlined" type="email" fullWidth={true}/>
+          <TextField label="Email Address" value={username} onChange={handleUsernameChange} variant="outlined" type="username" fullWidth={true}/>
         </Grid>
         <Grid item>
           <PasswordTextField value={password} onChange={handlePasswordChange}/>
