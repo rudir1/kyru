@@ -8,10 +8,3 @@ export const isAuthenticatedValue = Recoil.atom({
   default: false,
 });
 
-// cognito user
-// this is separate as the cognitor user may be valid on sign up
-// but user is not confirmed yet and so they are not authenticated
-export const userValue = Recoil.atom({
-  key: 'userValue',
-  default: {},
-});
