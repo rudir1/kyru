@@ -3,8 +3,9 @@ import { Grid, TextField, FormLabel, Button, Link } from '@material-ui/core';
 import 'fontsource-roboto';
 import Recoil from 'recoil';
 import { Auth } from 'aws-amplify';
-import { isAuthenticatedValue } from './kyru-auth';
+import { ViewType, viewTypeValue } from './kyru-auth';
 import PasswordTextField from './PasswordTextField';
+import KyruAppBar from './KyruAppBar';
 
 // type of sign in form
 const SignInType = {
@@ -23,7 +24,7 @@ function KyruSignIn () {
   let [error, setError] = React.useState("") ;
   let [signInType, setSignInType] = React.useState(SignInType.SIGN_IN) ;
 
-  let setIsAuthenticated = Recoil.useSetRecoilState(isAuthenticatedValue) ;
+  let setViewType = Recoil.useSetRecoilState(viewTypeValue) ;
 
   let header = "" ; 
   let form ;
@@ -75,7 +76,7 @@ function KyruSignIn () {
     try {
       const result = await Auth.confirmSignUp(username, code)
       console.log ("Confirm sign up success: ", result) ;
-      setIsAuthenticated(true) ;
+      setViewType(ViewType.RACHIO_SIGN_IN) ;
     }
     catch (error) {
       console.log ("Confirm sign up failure: ", error) ;
@@ -95,10 +96,12 @@ function KyruSignIn () {
       const result = await Auth.signIn(username, password) ;
       console.log ("Sign in success: ", result) ;
 
-      if (result.challengeName === 'NEW_PASSWORD_REQUIRED')
+      if (result.challengeName === 'NEW_PASSWORD_REQUIRED') {
         setSignInType(SignInType.COMPLETE_NEW_PASSWORD) ;
-      else
-        setIsAuthenticated(true) ;
+      }
+      else {
+        setViewType(ViewType.RACHIO_SIGN_IN) ;
+      }
     }
     catch (error) {
       console.log ("Sign in failure: ", error) ;
@@ -116,7 +119,7 @@ function KyruSignIn () {
     try {
       const result = await Auth.completeNewPassword (username, password)
       console.log ("Complete new password success: ", result) ;
-      setIsAuthenticated(true) ;
+      setViewType(ViewType.RACHIO_SIGN_IN) ;
     }
     catch (error) {
       console.log ("Complete new password failure: ", error) ;
@@ -133,7 +136,7 @@ function KyruSignIn () {
     try {
       const result = await Auth.forgotPasswordSubmit (username, code, password)
       console.log ("Forgot password submit success: ", result) ;
-      setIsAuthenticated(true) ;
+      setViewType(ViewType.RACHIO_SIGN_IN) ;
     }
     catch (error) {
       console.lgg ("Forgot password submit failure: ", error) ;
@@ -220,7 +223,7 @@ function KyruSignIn () {
     form = (
       <>
         <Grid item>
-          <TextField label="Email Address" value={username} onChange={handleUsernameChange} variant="outlined" type="username" fullWidth={true}/>
+          <TextField label="Email Address" value={username} onChange={handleUsernameChange} variant="outlined" type="email" fullWidth={true}/>
         </Grid>
         <Grid item>
           <PasswordTextField value={password} onChange={handlePasswordChange}/>
@@ -238,7 +241,7 @@ function KyruSignIn () {
     form = (
       <>
         <Grid item>
-          <TextField label="Email Address" value={username} onChange={handleUsernameChange} variant="outlined" type="username" fullWidth={true}/>
+          <TextField label="Email Address" value={username} onChange={handleUsernameChange} variant="outlined" type="email" fullWidth={true}/>
         </Grid>
         <Grid item>
           <TextField label="Confirmation Code" value={code} onChange={handleCodeChange} variant="outlined" type="text" fullWidth={true}/>
@@ -247,6 +250,7 @@ function KyruSignIn () {
           <Button variant="contained" color="primary" fullWidth={true} onClick={handleClickButtonConfirmSignUp}>Confirm Sign Up</Button>
         </Grid>
         <Grid item>
+          <Link onClick={handleClickLinkSignIn}>Sign In</Link>
           <Link onClick={handleClickLinkSendNewCode}>Send New Code</Link>
         </Grid>
       </>
@@ -256,7 +260,7 @@ function KyruSignIn () {
     form = (
       <>
         <Grid item>
-          <TextField label="Email Address" value={username} onChange={handleUsernameChange} variant="outlined" type="username" fullWidth={true}/>
+          <TextField label="Email Address" value={username} onChange={handleUsernameChange} variant="outlined" type="email" fullWidth={true}/>
         </Grid>
         <Grid item>
           <TextField label="New Password" value={password} onChange={handlePasswordChange} variant="outlined" type="text" fullWidth={true}/>
@@ -271,7 +275,7 @@ function KyruSignIn () {
     form = (
       <>
         <Grid item>
-          <TextField label="Email Address" value={username} onChange={handleUsernameChange} variant="outlined" type="username" fullWidth={true}/>
+          <TextField label="Email Address" value={username} onChange={handleUsernameChange} variant="outlined" type="email" fullWidth={true}/>
         </Grid>
         <Grid item>
           <TextField label="New Password" value={password} onChange={handlePasswordChange} variant="outlined" type="text" fullWidth={true}/>
@@ -293,7 +297,7 @@ function KyruSignIn () {
     form = (
       <>
         <Grid item>
-          <TextField label="Email Address" value={username} onChange={handleUsernameChange} variant="outlined" type="username" fullWidth={true}/>
+          <TextField label="Email Address" value={username} onChange={handleUsernameChange} variant="outlined" type="email" fullWidth={true}/>
         </Grid>
         <Grid item>
           <PasswordTextField value={password} onChange={handlePasswordChange}/>
@@ -313,16 +317,15 @@ function KyruSignIn () {
   // render the component
   return (
     <div>
-      <Grid container direction="column" justify="flex-end" alignItems="stretch" alignContent="center" spacing={4}>
+      <Grid container direction="column" justify="flex-end" alignItems="stretch" alignContent="center" spacing={1}>
+        <Grid item>
+          <KyruAppBar/>
+        </Grid>
         <Grid item>
           <FormLabel>{header}</FormLabel>
         </Grid>
+        {form}
       </Grid>
-      <form>
-        <Grid container direction="column" justify="flex-end" alignItems="stretch" alignContent="center" spacing={1}>
-          {form}
-        </Grid>
-      </form>
     </div>
   ) ;
 }

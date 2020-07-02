@@ -1,17 +1,21 @@
 import React from 'react';
 import KyruSignIn from './KyruSignIn';
+import RachioSignIn from './RachioSignIn';
 import Main from './Main';
 import Recoil from 'recoil';
-import { isAuthenticatedValue } from './kyru-auth';
+import { ViewType, viewTypeValue } from './kyru-auth';
 
 import './App.css';
 
 function App() {
-  const isAuthenticated = Recoil.useRecoilValue(isAuthenticatedValue);
+  const viewType = Recoil.useRecoilValue(viewTypeValue);
 
   return (
     <div>
-      { isAuthenticated ? <Main /> : <KyruSignIn/> }
+      { (viewType === ViewType.KYRU_SIGN_IN)   ? <KyruSignIn/> :
+        (viewType === ViewType.RACHIO_SIGN_IN) ? <RachioSignIn/> :
+                                                 <Main/>
+      }
     </div>
   );
 }

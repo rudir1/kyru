@@ -5,6 +5,7 @@ import './index.css';
 import App from './App';
 import Amplify from 'aws-amplify';
 import * as serviceWorker from './serviceWorker';
+import { KyruState } from './kyru-auth';
 
 // enable logger
 // Amplify.Logger.LOG_LEVEL = 'VERBOSE';
@@ -68,7 +69,8 @@ Amplify.configure({
 ReactDOM.render(
   <React.StrictMode>
     <RecoilRoot>
-      <App />
+      <KyruState/>
+      <App/>
     </RecoilRoot>
   </React.StrictMode>,
   document.getElementById('root')

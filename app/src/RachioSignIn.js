@@ -1,24 +1,48 @@
-// import React from 'react';
-// import { useHistory } from "react-router-dom";
+import React from 'react';
+import { Grid, TextField, FormLabel, Button } from '@material-ui/core';
+import 'fontsource-roboto';
+import Recoil from 'recoil';
+import { ViewType, viewTypeValue, apiKeyValue } from './kyru-auth';
+import KyruAppBar from './KyruAppBar';
 
 function RachioSignIn() {
-//  const history = useHistory();
+  let [apiKey, setAPIKey] = React.useState("") ;
+  let setAPIKeyValue = Recoil.useSetRecoilState(apiKeyValue) ;
+  let setViewType = Recoil.useSetRecoilState(viewTypeValue) ;
 
-/*
-  let client_id = '1086335094551-q0vbi5a05o2dghg1nge2ejkg5oqvkilm.apps.googleusercontent.com';
-  let url = new URL('https://accounts.google.com/o/oauth2/v2/auth');
-  url.searchParams.set('scope', 'email profile openid');
-  url.searchParams.set('response_type', 'code');
-  url.searchParams.set('state', 'random_value_here');
-  url.searchParams.set('redirect_uri', 'https://www.kyru.io');
-  url.searchParams.set('client_id', client_id);
+  // handle keystrokes in username text field
+  function handleAPIKeyChange (event) {
+    setAPIKey (event.target.value) ;
+  }
 
-  let path = encodeURI(url);
-  console.log(path);
+  // handle submit api key button click
+  async function handleClickButtonSubmit (event) {
+    event.preventDefault();
+    setAPIKeyValue(apiKey);
+    setViewType(ViewType.MAIN);
+  }
 
-  window.location.href = path ;
-*/
-  return null ;
+  // render the component
+  return (
+    <div>
+      <Grid container direction="column" justify="flex-end" alignItems="stretch" alignContent="center" spacing={1}>
+        <Grid item>
+          <KyruAppBar/>
+        </Grid>
+        <Grid item>
+          <FormLabel>Rachio API Key</FormLabel>
+        </Grid>
+        <form>
+          <Grid item>
+            <TextField label="API Key" value={apiKey} onChange={handleAPIKeyChange} variant="outlined" type="text" fullWidth={true}/>
+          </Grid>
+          <Grid item>
+            <Button variant="contained" color="primary" fullWidth={true} onClick={handleClickButtonSubmit}>Submit</Button>
+          </Grid>
+        </form>
+      </Grid>
+    </div>
+  ) ;
 }
 
 export default RachioSignIn;
