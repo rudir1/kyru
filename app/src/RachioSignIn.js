@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, TextField, FormLabel, Button } from '@material-ui/core';
 import 'fontsource-roboto';
 import Recoil from 'recoil';
-import { ViewType, viewTypeValue, apiKeyValue } from './kyru-auth';
+import { ViewType, viewTypeValue, apiKeyValue } from './KyruState';
 import KyruAppBar from './KyruAppBar';
 
 function RachioSignIn() {

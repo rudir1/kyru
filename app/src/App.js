@@ -3,7 +3,7 @@ import KyruSignIn from './KyruSignIn';
 import RachioSignIn from './RachioSignIn';
 import Main from './Main';
 import Recoil from 'recoil';
-import { ViewType, viewTypeValue } from './kyru-auth';
+import { ViewType, viewTypeValue } from './KyruState';
 
 import './App.css';
 

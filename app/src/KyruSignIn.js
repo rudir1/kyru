@@ -3,7 +3,7 @@ import { Grid, TextField, FormLabel, Button, Link } from '@material-ui/core';
 import 'fontsource-roboto';
 import Recoil from 'recoil';
 import { Auth } from 'aws-amplify';
-import { ViewType, viewTypeValue } from './kyru-auth';
+import { ViewType, viewTypeValue } from './KyruState';
 import PasswordTextField from './PasswordTextField';
 import KyruAppBar from './KyruAppBar';
 
