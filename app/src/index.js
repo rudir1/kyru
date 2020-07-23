@@ -5,7 +5,7 @@ import './index.css';
 import App from './App';
 import Amplify from 'aws-amplify';
 import * as serviceWorker from './serviceWorker';
-import { KyruState } from './KyruState';
+import { KyruState, initializeAtomFromStorage } from './KyruState';
 
 // enable logger
 // Amplify.Logger.LOG_LEVEL = 'VERBOSE';
@@ -68,7 +68,7 @@ Amplify.configure({
 
 ReactDOM.render(
   <React.StrictMode>
-    <RecoilRoot>
+    <RecoilRoot initializeState={initializeAtomFromStorage}>
       <KyruState/>
       <App/>
     </RecoilRoot>

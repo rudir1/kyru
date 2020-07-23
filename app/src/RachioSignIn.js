@@ -2,13 +2,13 @@ import React from 'react';
 import { Grid, TextField, FormLabel, Button } from '@material-ui/core';
 import 'fontsource-roboto';
 import Recoil from 'recoil';
-import { ViewType, viewTypeValue, apiKeyValue } from './KyruState';
+import { ViewType, viewTypeAtom, rachioApiKeyAtom } from './KyruState';
 import KyruAppBar from './KyruAppBar';
 
 function RachioSignIn() {
   let [apiKey, setAPIKey] = React.useState("") ;
-  let setAPIKeyValue = Recoil.useSetRecoilState(apiKeyValue) ;
-  let setViewType = Recoil.useSetRecoilState(viewTypeValue) ;
+  let setAPIKeyValue = Recoil.useSetRecoilState(rachioApiKeyAtom) ;
+  let setViewType = Recoil.useSetRecoilState(viewTypeAtom) ;
 
   // handle keystrokes in username text field
   function handleAPIKeyChange (event) {

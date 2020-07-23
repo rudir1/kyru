@@ -3,7 +3,7 @@ import { Grid, TextField, FormLabel, Button, Link } from '@material-ui/core';
 import 'fontsource-roboto';
 import Recoil from 'recoil';
 import { Auth } from 'aws-amplify';
-import { ViewType, viewTypeValue } from './KyruState';
+import { ViewType, viewTypeAtom } from './KyruState';
 import PasswordTextField from './PasswordTextField';
 import KyruAppBar from './KyruAppBar';
 
@@ -24,7 +24,7 @@ function KyruSignIn () {
   let [error, setError] = React.useState("") ;
   let [signInType, setSignInType] = React.useState(SignInType.SIGN_IN) ;
 
-  let setViewType = Recoil.useSetRecoilState(viewTypeValue) ;
+  let setViewType = Recoil.useSetRecoilState(viewTypeAtom) ;
 
   let header = "" ; 
   let form ;

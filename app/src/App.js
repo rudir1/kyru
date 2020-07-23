@@ -3,18 +3,26 @@ import KyruSignIn from './KyruSignIn';
 import RachioSignIn from './RachioSignIn';
 import Main from './Main';
 import Recoil from 'recoil';
-import { ViewType, viewTypeValue } from './KyruState';
+import { ViewType, viewTypeAtom } from './KyruState';
+import { Auth } from 'aws-amplify';
 
 import './App.css';
 
 function App() {
-  const viewType = Recoil.useRecoilValue(viewTypeValue);
+  const viewType = Recoil.useRecoilValue(viewTypeAtom);
+  
+  React.useEffect(() => {
+    Auth.currentAuthenticatedUser({
+        bypassCache: false  // Optional, By default is false. If set to true, this call will send a request to Cognito to get the latest user data
+    }).then(user => console.log(user))
+    .catch(err => console.log(err));
+  },[]) ;
 
   return (
     <div>
-      { (viewType === ViewType.KYRU_SIGN_IN)   ? <KyruSignIn/> :
+      { (viewType === ViewType.MAIN)           ? <Main/> :
         (viewType === ViewType.RACHIO_SIGN_IN) ? <RachioSignIn/> :
-                                                 <Main/>
+                                                 <KyruSignIn/>
       }
     </div>
   );
